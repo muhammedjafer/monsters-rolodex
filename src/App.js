@@ -1,5 +1,4 @@
 import { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 
 class App extends Component {
@@ -7,17 +6,37 @@ class App extends Component {
     super();
 
     this.state = {
-      monsters: [
-        { name: "first", id: 1 },
-        { name: "second", id: 2 },
-        { name: "third", id: 3 },
-      ],
+      monsters: [],
     };
+  }
+
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((users) =>
+        this.setState(() => {
+          return { monsters: users };
+        })
+      );
   }
 
   render() {
     return (
       <div className="App">
+        <input
+          type="search"
+          className="search-box"
+          onChange={(event) => {
+            const searchString = event.target.value.toLocaleLowerCase();
+            const filteredMonsters = this.state.monsters.filter((monster) => {
+              return monster.name.toLocaleLowerCase().includes(searchString);
+            });
+
+            this.setState(() => {
+              return { monsters: filteredMonsters };
+            });
+          }}
+        />
         {this.state.monsters.map((monster) => {
           return (
             <div key={monster.id}>
